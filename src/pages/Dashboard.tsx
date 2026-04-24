@@ -33,7 +33,7 @@ interface LevelRun {
   questions_total: number;
   questions_correct: number;
   xp_earned: number;
-  completed_at: string;
+  created_at: string;
 }
 
 const Dashboard = () => {
@@ -67,9 +67,9 @@ const Dashboard = () => {
           .maybeSingle(),
         supabase
           .from("level_completions")
-          .select("level, questions_total, questions_correct, xp_earned, completed_at")
+          .select("level, questions_total, questions_correct, xp_earned, created_at")
           .eq("user_id", user.id)
-          .order("completed_at", { ascending: false }),
+          .order("created_at", { ascending: false }),
         supabase.from("user_badges").select("badge_id, badges(*)").eq("user_id", user.id),
         supabase
           .from("endless_runs")
@@ -117,7 +117,7 @@ const Dashboard = () => {
     if (!run || !profile) return null;
     return {
       kind: "level",
-      name: profile.display_name ?? user?.email?.split("@")[0] ?? "Player",
+      name: profile.display_name ?? user?.displayName ?? user?.email?.split("@")[0] ?? "Player",
       level,
       correct: run.questions_correct,
       total: run.questions_total,
@@ -130,7 +130,7 @@ const Dashboard = () => {
     if (!allDone || !profile) return null;
     return {
       kind: "champion",
-      name: profile.display_name ?? user?.email?.split("@")[0] ?? "Champion",
+      name: profile.display_name ?? user?.displayName ?? user?.email?.split("@")[0] ?? "Champion",
       totalXp: profile.total_xp,
     };
   };
@@ -168,7 +168,7 @@ const Dashboard = () => {
           <div className="flex-1 min-w-[200px]">
             <div className="text-xs uppercase tracking-widest text-muted-foreground">Welcome back, player</div>
             <h1 className="font-display text-2xl md:text-3xl mt-1 text-neon">
-              {profile?.display_name ?? "Adventurer"}
+              {profile?.display_name ?? user?.displayName ?? "Adventurer"}
             </h1>
             <div className="mt-4 flex items-center gap-4">
               <div className="text-accent font-display text-lg text-neon-lime">
@@ -326,7 +326,7 @@ const Dashboard = () => {
                       <p className="text-xs text-muted-foreground mb-4">
                         Best score: {run.questions_correct}/{run.questions_total} ({percent}%) · +{run.xp_earned} XP
                         <br />
-                        Earned {new Date(run.completed_at).toLocaleDateString()}
+                      Earned {new Date(run.created_at).toLocaleDateString()}
                       </p>
                     ) : (
                       <p className="text-xs text-muted-foreground mb-4">

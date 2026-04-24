@@ -238,7 +238,7 @@ const Quiz = () => {
     // Build a certificate for EVERY level completion. If all 3 levels are
     // cleared this run also issues the Champion certificate.
     const certName =
-      profile?.display_name ?? user.email?.split("@")[0] ?? "Player";
+      profile?.display_name ?? user.displayName ?? user.email?.split("@")[0] ?? "Player";
 
     const certData: CertificateData = isChampion
       ? { kind: "champion", name: certName, totalXp: newTotal }

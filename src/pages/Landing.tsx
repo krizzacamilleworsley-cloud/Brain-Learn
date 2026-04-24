@@ -89,7 +89,7 @@ const Landing = () => {
 
       <footer className="container py-10 text-center text-sm text-muted-foreground">
         Developer - Camille & Princess <br />
-      BrainLearn © 2026{new Date().getFullYear()}
+      BrainLearn © {new Date().getFullYear()}
       </footer>
     </div>
   );

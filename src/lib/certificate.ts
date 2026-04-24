@@ -77,7 +77,7 @@ export function buildCertificate(data: CertificateData): { doc: jsPDF; filename:
         label: "CHAMPION",
         emoji: "",
         blurb:
-          "for conquering all three levels of GrammarQuest - Easy, Medium and Hard - on the path to English mastery.",
+          "for conquering all three levels of BrainLearn - Easy, Medium and Hard - on the path to English mastery.",
         titleRgb: [190, 242, 100] as [number, number, number],
       }
     : tierFor(percent);
