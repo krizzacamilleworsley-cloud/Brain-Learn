@@ -20,6 +20,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import { ensureProfileExists } from "@/lib/profile-fix";
 import correctSfx from '/sounds/correct.mp3';
 import wrongSfx from '/sounds/wrong.mp3';
 import bgm from '/sounds/bgm.mp3';
@@ -173,12 +174,16 @@ const Quiz = () => {
 
     if (!user) return;
 
+    // Ensure profile exists before saving completion
+    await ensureProfileExists(user);
+
     // Insert completion
     await supabase.from("level_completions").insert({
-      user_id: user.id,
+      user_id: user.uid,
       level: level!,
       score: correctCount,
       xp_earned: xpEarned,
+      completed_at: new Date().toISOString(), // Explicitly set completion time
       questions_total: questions.length,
       questions_correct: correctCount,
     });
@@ -187,7 +192,7 @@ const Quiz = () => {
     const { data: profile } = await supabase
       .from("profiles")
       .select("total_xp, current_level, display_name")
-      .eq("id", user.id)
+      .eq("id", user.uid)
       .maybeSingle();
 
     const newTotal = (profile?.total_xp ?? 0) + xpEarned;
@@ -195,7 +200,7 @@ const Quiz = () => {
     await supabase
       .from("profiles")
       .update({ total_xp: newTotal, current_level: newCurrent })
-      .eq("id", user.id);
+      .eq("id", user.uid);
 
     // Award badges
     const earnedCodes: string[] = ["first_steps"];
@@ -208,7 +213,7 @@ const Quiz = () => {
     const { data: completions } = await supabase
       .from("level_completions")
       .select("level")
-      .eq("user_id", user.id);
+      .eq("user_id", user.uid);
     const distinctLevels = new Set((completions ?? []).map((c) => c.level));
     distinctLevels.add(level!);
     const isChampion = distinctLevels.size >= 3;
@@ -222,12 +227,12 @@ const Quiz = () => {
     const { data: existing } = await supabase
       .from("user_badges")
       .select("badge_id")
-      .eq("user_id", user.id);
+      .eq("user_id", user.uid);
     const existingIds = new Set((existing ?? []).map((r) => r.badge_id));
 
     const inserts = (badgeRows ?? [])
       .filter((b) => !existingIds.has(b.id))
-      .map((b) => ({ user_id: user.id, badge_id: b.id }));
+      .map((b) => ({ user_id: user.uid, badge_id: b.id }));
 
     if (inserts.length) {
       await supabase.from("user_badges").insert(inserts);

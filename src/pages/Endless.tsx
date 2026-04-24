@@ -58,7 +58,7 @@ const Endless = () => {
     supabase
       .from("endless_runs")
       .select("score")
-      .eq("user_id", user.id)
+      .eq("user_id", user.uid)
       .order("score", { ascending: false })
       .limit(1)
       .maybeSingle()
@@ -195,7 +195,7 @@ const Endless = () => {
 
     // Insert run
     await supabase.from("endless_runs").insert({
-      user_id: user.id,
+      user_id: user.uid,
       score,
       questions_answered: answered,
       questions_correct: correct,
@@ -207,10 +207,10 @@ const Endless = () => {
     const { data: profile } = await supabase
       .from("profiles")
       .select("total_xp")
-      .eq("id", user.id)
+      .eq("id", user.uid)
       .maybeSingle();
     const newTotal = (profile?.total_xp ?? 0) + xp;
-    await supabase.from("profiles").update({ total_xp: newTotal }).eq("id", user.id);
+    await supabase.from("profiles").update({ total_xp: newTotal }).eq("id", user.uid);
 
     // Update best
     if (score > bestScore) {
@@ -230,11 +230,11 @@ const Endless = () => {
     const { data: existing } = await supabase
       .from("user_badges")
       .select("badge_id")
-      .eq("user_id", user.id);
+      .eq("user_id", user.uid);
     const existingIds = new Set((existing ?? []).map((r) => r.badge_id));
     const inserts = (badgeRows ?? [])
       .filter((b) => !existingIds.has(b.id))
-      .map((b) => ({ user_id: user.id, badge_id: b.id }));
+      .map((b) => ({ user_id: user.uid, badge_id: b.id }));
     if (inserts.length) await supabase.from("user_badges").insert(inserts);
   };
 

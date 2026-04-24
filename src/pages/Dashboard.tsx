@@ -19,6 +19,7 @@ import {
   getCertificatePreviewUrl,
   type CertificateData,
 } from "@/lib/certificate";
+import { ensureProfileExists } from "@/lib/profile-fix";
 
 interface Profile {
   display_name: string | null;
@@ -33,7 +34,7 @@ interface LevelRun {
   questions_total: number;
   questions_correct: number;
   xp_earned: number;
-  created_at: string;
+  completed_at: string;
 }
 
 const Dashboard = () => {
@@ -58,46 +59,50 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!user) return;
-    (async () => {
-      const [{ data: p }, { data: completions }, { data: ub }, { data: endless }] = await Promise.all([
-        supabase
-          .from("profiles")
-          .select("display_name, avatar_url, total_xp, current_level")
-          .eq("id", user.id)
-          .maybeSingle(),
-        supabase
-          .from("level_completions")
-          .select("level, questions_total, questions_correct, xp_earned, created_at")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false }),
-        supabase.from("user_badges").select("badge_id, badges(*)").eq("user_id", user.id),
-        supabase
-          .from("endless_runs")
-          .select("score, longest_streak")
-          .eq("user_id", user.id)
-          .order("score", { ascending: false })
-          .limit(1)
-          .maybeSingle(),
-      ]);
-      if (p) setProfile(p);
-      if (ub) setBadges(ub.map((row: any) => row.badges).filter(Boolean));
-      if (endless) setEndlessBest(endless);
+    
+    // Ensure profile exists before fetching data
+    ensureProfileExists(user).then(() => {
+      (async () => {
+        const [{ data: p }, { data: completions }, { data: ub }, { data: endless }] = await Promise.all([
+          supabase
+            .from("profiles")
+            .select("display_name, avatar_url, total_xp, current_level")
+            .eq("id", user.uid)
+            .maybeSingle(),
+          supabase
+            .from("level_completions")
+            .select("level, questions_total, questions_correct, xp_earned, completed_at")
+            .eq("user_id", user.uid)
+            .order("completed_at", { ascending: false }),
+          supabase.from("user_badges").select("badge_id, badges(*)").eq("user_id", user.uid),
+          supabase
+            .from("endless_runs")
+            .select("score, longest_streak")
+            .eq("user_id", user.uid)
+            .order("score", { ascending: false })
+            .limit(1)
+            .maybeSingle(),
+        ]);
+        if (p) setProfile(p);
+        if (ub) setBadges(ub.map((row: any) => row.badges).filter(Boolean));
+        if (endless) setEndlessBest(endless);
 
-      // Pick the best run per level: highest correct%, tie-break by most recent
-      if (completions) {
-        const best: Record<Level, LevelRun | undefined> = {} as Record<Level, LevelRun | undefined>;
-        for (const row of completions as LevelRun[]) {
-          const lvl = row.level as Level;
-          const current = best[lvl];
-          const score = row.questions_total ? row.questions_correct / row.questions_total : 0;
-          const currentScore = current && current.questions_total
-            ? current.questions_correct / current.questions_total
-            : -1;
-          if (!current || score > currentScore) best[lvl] = row;
+        // Pick the best run per level: highest correct%, tie-break by most recent
+        if (completions) {
+          const best: Record<Level, LevelRun | undefined> = {} as Record<Level, LevelRun | undefined>;
+          for (const row of completions as LevelRun[]) {
+            const lvl = row.level as Level;
+            const current = best[lvl];
+            const score = row.questions_total ? row.questions_correct / row.questions_total : 0;
+            const currentScore = current && current.questions_total
+              ? current.questions_correct / current.questions_total
+              : -1;
+            if (!current || score > currentScore) best[lvl] = row;
+          }
+          setBestRuns(best);
         }
-        setBestRuns(best);
-      }
-    })();
+      })();
+    });
   }, [user]);
 
   const completedLevels = useMemo(
@@ -326,7 +331,7 @@ const Dashboard = () => {
                       <p className="text-xs text-muted-foreground mb-4">
                         Best score: {run.questions_correct}/{run.questions_total} ({percent}%) · +{run.xp_earned} XP
                         <br />
-                      Earned {new Date(run.created_at).toLocaleDateString()}
+                      Earned {new Date(run.completed_at).toLocaleDateString()}
                       </p>
                     ) : (
                       <p className="text-xs text-muted-foreground mb-4">
