@@ -20,6 +20,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import correctSfx from '/sounds/correct.mp3';
+import wrongSfx from '/sounds/wrong.mp3';
+import bgm from '/sounds/bgm.mp3';
 
 interface Question {
   question: string;
@@ -118,12 +121,16 @@ const Quiz = () => {
     setSelected(i);
     setRevealed(true);
     if (i !== null && currentQ && i === currentQ.correctIndex) {
+      // Play correct sound
+      correctAudioRef.current?.play().catch(() => {});
       const { mult, tier } = computeBonus(timeLeft);
       const gained = Math.round(meta!.xpPerCorrect * mult);
       setCorrectCount((c) => c + 1);
       setEarnedXp((x) => x + gained);
       setLastBonus({ xp: gained, tier });
     } else {
+      // Play wrong sound
+      wrongAudioRef.current?.play().catch(() => {});
       setLastBonus({ xp: 0, tier: "miss" });
     }
   }
@@ -389,7 +396,12 @@ const Quiz = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="relative min-h-screen">
+      {/* Audio elements for SFX and BGM */}
+      <audio ref={correctAudioRef} src={correctSfx} preload="auto" />
+      <audio ref={wrongAudioRef} src={wrongSfx} preload="auto" />
+      <audio ref={bgmAudioRef} src={bgm} preload="auto" />
+
       <NavBar />
       <div className="container py-10 max-w-2xl">
         <div className="flex items-center justify-between mb-4">
