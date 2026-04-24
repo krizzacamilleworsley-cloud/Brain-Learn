@@ -12,7 +12,7 @@ export function NavBar() {
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2 font-display text-sm">
           <Sparkles className="h-5 w-5 text-primary animate-flicker" />
-          <span className="text-neon">WORD<span className="text-neon-cyan">QUEST</span></span>
+          <span className="text-neon">BRAIN<span className="text-neon-cyan">LEARN</span></span>
         </Link>
 
         <nav className="flex items-center gap-2 sm:gap-4">

@@ -88,7 +88,8 @@ const Landing = () => {
       </section>
 
       <footer className="container py-10 text-center text-sm text-muted-foreground">
-        Developer - GrammarQuest © {new Date().getFullYear()}
+        Developer - Camille & Princess <br />
+      BrainLearn © 2026{new Date().getFullYear()}
       </footer>
     </div>
   );
