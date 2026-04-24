@@ -1,0 +1,57 @@
+# Vercel Deployment Ignore File
+# Files and directories to exclude from Vercel deployment
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Git
+.git
+.gitignore
+
+# Documentation
+docs/
+*.md
+!README.md
+
+# Development files
+.env.local
+.env.*.local
+*.example.env
+
+# Build outputs (already handled by outputDirectory)
+dist/
+build/
+
+# IDE files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+*.swo
+
+# Testing
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Cache
+.cache/
+.eslintcache
+.turbo/
+
+# Misc
+.vercelignore
+vercel.json
+setup-vercel.md
+GOOGLE_OAUTH_SETUP.md
+FIREBASE_AUTH_SETUP.md
+OAUTH_TROUBLESHOOTING.md
+FIREBASE_INTEGRATION_COMPLETE.md

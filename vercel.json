@@ -1,0 +1,9 @@
+# Vercel deployment configuration for GrammarQuest
+# Frontend deployed to Vercel, Supabase database for backend
+
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "nodeVersion": "20.x"
+}

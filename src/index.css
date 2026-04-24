@@ -1,0 +1,122 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Neon arcade — dark by default */
+    --background: 240 30% 6%;
+    --foreground: 280 20% 96%;
+
+    --card: 240 30% 9%;
+    --card-foreground: 280 20% 96%;
+
+    --popover: 240 35% 8%;
+    --popover-foreground: 280 20% 96%;
+
+    --primary: 295 95% 62%;          /* magenta neon */
+    --primary-foreground: 240 30% 6%;
+    --primary-glow: 295 100% 75%;
+
+    --secondary: 190 95% 55%;        /* cyan neon */
+    --secondary-foreground: 240 30% 6%;
+
+    --accent: 75 95% 60%;            /* lime neon */
+    --accent-foreground: 240 30% 6%;
+
+    --muted: 240 20% 14%;
+    --muted-foreground: 260 15% 70%;
+
+    --destructive: 0 90% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --success: 145 90% 55%;
+    --warning: 40 100% 60%;
+
+    --border: 270 40% 22%;
+    --input: 270 40% 18%;
+    --ring: 295 95% 62%;
+
+    --radius: 1rem;
+
+    --gradient-primary: linear-gradient(135deg, hsl(295 95% 62%), hsl(255 95% 65%));
+    --gradient-arcade: linear-gradient(135deg, hsl(295 95% 62%) 0%, hsl(255 95% 65%) 50%, hsl(190 95% 55%) 100%);
+    --gradient-bg: radial-gradient(ellipse at top, hsl(270 50% 14%) 0%, hsl(240 30% 6%) 60%);
+
+    --shadow-neon-primary: 0 0 30px hsl(295 95% 62% / 0.5), 0 0 60px hsl(295 95% 62% / 0.25);
+    --shadow-neon-cyan: 0 0 30px hsl(190 95% 55% / 0.5), 0 0 60px hsl(190 95% 55% / 0.2);
+    --shadow-neon-lime: 0 0 30px hsl(75 95% 60% / 0.45);
+    --shadow-card: 0 8px 30px -10px hsl(295 95% 62% / 0.3), inset 0 1px 0 hsl(270 60% 30% / 0.4);
+
+    --sidebar-background: 240 30% 8%;
+    --sidebar-foreground: 280 20% 96%;
+    --sidebar-primary: 295 95% 62%;
+    --sidebar-primary-foreground: 240 30% 6%;
+    --sidebar-accent: 240 20% 14%;
+    --sidebar-accent-foreground: 280 20% 96%;
+    --sidebar-border: 270 40% 22%;
+    --sidebar-ring: 295 95% 62%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html, body, #root { min-height: 100%; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    background-image: var(--gradient-bg);
+    font-family: 'Rajdhani', 'Inter', system-ui, sans-serif;
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Press Start 2P', 'Rajdhani', monospace;
+    letter-spacing: 0.02em;
+  }
+}
+
+@layer utilities {
+  .text-neon {
+    text-shadow: 0 0 8px hsl(var(--primary) / 0.8), 0 0 20px hsl(var(--primary) / 0.5);
+  }
+  .text-neon-cyan {
+    text-shadow: 0 0 8px hsl(var(--secondary) / 0.8), 0 0 20px hsl(var(--secondary) / 0.5);
+  }
+  .text-neon-lime {
+    text-shadow: 0 0 8px hsl(var(--accent) / 0.9), 0 0 18px hsl(var(--accent) / 0.5);
+  }
+  .bg-grid {
+    background-image:
+      linear-gradient(hsl(var(--primary) / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--primary) / 0.08) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+  .glass-card {
+    background: linear-gradient(135deg, hsl(240 30% 12% / 0.7), hsl(270 40% 10% / 0.7));
+    backdrop-filter: blur(14px);
+    border: 1px solid hsl(var(--border));
+    box-shadow: var(--shadow-card);
+  }
+  .scanlines::before {
+    content: "";
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent 0, transparent 2px, hsl(0 0% 0% / 0.15) 2px, hsl(0 0% 0% / 0.15) 3px);
+    pointer-events: none;
+    border-radius: inherit;
+  }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.2); }
+  50% { box-shadow: 0 0 35px hsl(var(--primary) / 0.8), 0 0 70px hsl(var(--primary) / 0.4); }
+}
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}
